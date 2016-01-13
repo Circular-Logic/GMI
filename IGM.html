@@ -1,69 +1,118 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
-    <title>Drawing tools</title>
-    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
     <meta charset="utf-8">
+    <meta name="viewport" content="initial-scale= 1.0, user-scalable=no">
 
-<!-- Inline Page CSS-->
+    <!--    Google API-->
+    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?libraries=places&key=AIzaSyBqS-0C9Vj4EsjdqpOmf2goXpg0q5BSZ9E"></script>
+
+    <script>
+      var map;
+      var infowindow;
+      var request;
+      var service;
+      var markers = [];
+
+      //  Displays map
+      function initialize(){
+        var center = new google.maps.LatLng(34.0569172,-117.8239381);
+        map = new google.maps.Map(document.getElementById('map'),{
+          center: center,zoom:13
+        });
+
+        request = {
+          location: center,
+          radius: 8047,
+          types: ['atm']
+        };
+        infowindow = new google.maps.InfoWindow();
+        var service = new google.maps.places.PlacesService(map);
+        service.nearbySearch(request, callback);
+
+
+        //User can search by region when they right click a section on the map. Radius is set to
+        //5 miles to start and looks only for places containing atm for demostration.
+
+        google.maps.event.addListener(map, 'rightclick', function(event){
+          map.setCenter(event.latLng)
+          clearResults(markers)
+
+          var request = {
+            location: event.latLng,
+            radius:8047,
+            types:['atm']
+          };
+          service.nearbySearch(request, callback);
+
+        })
+
+        //Autocomplete functionality
+        var ac = new google.maps.places.Autocomplete(document.getElementById('autocomplete'));
+        google.maps.event.addListener(ac, 'place_changed', function(){
+          var place = ac.getPlace();
+          console.log(place.formatted_address);
+          console.log(place.url);
+          console.log(place.geometry.location);
+        });
+      }
+
+      //Displays results
+      function callback(results, status){
+        if(status == google.maps.places.PlacesServiceStatus.OK){
+          for(var i = 0; i < results.length; i++){
+            markers.push(createMarker(results[i]));
+          }
+        }
+      }
+
+      //Create markers for results
+      function createMarker(place){
+        var placeLoc = place.geometry.location;
+        var marker = new google.maps.Marker({
+          map:map,
+          position: place.geometry.location
+        });
+
+        //Shows more info when marker is clicked
+        google.maps.event.addListener(marker, 'click', function(){
+          infowindow.setContent(place.name);
+          infowindow.open(map, this);
+        });
+        return marker;
+      }
+
+      //Clears markers when right click
+      function clear(markers){
+        for(var marks in markers){
+          markers[marks].setMap(null)
+        }
+        markers = []
+      }
+      //Displays results when page is fully loaded
+      google.maps.event.addDomListener(window,'load',initialize);
+    </script>
+
     <style>
-      html, body {
+      html,body, #map{
         height: 100%;
-        margin: 0;
-        padding: 0;
-        background-color: deepskyblue;
+        margin: 0px;
+        padding: 0px;
       }
-      #map {
-        height: 100%;
-        width: 78%;
+      #autocomplete{
+        width: 250px;
+        margin-top: 3px;
+        margin-bottom: 3px;
+        padding: 5px;
+      }
 
-      }
     </style>
   </head>
-
   <body>
-<!--    Map container-->
+    <!--Search Bar-->
+    <input id="autocomplete" class="controls" type="text" placeholder="Enter Place">
+    <!--Container for Google Maps-->
     <div id="map"></div>
-
-<!--  Javascript  -->
-    <script>
-
-
-      function initMap() {
-//  Create Map
-        var map = new google.maps.Map(document.getElementById('map'), {
-          center: {lat: 34.058511599999996, lng: -117.824847},
-          zoom: 9
-        });
-//Implement Drawing Tools
-        var drawingManager = new google.maps.drawing.DrawingManager({
-          drawingMode: google.maps.drawing.OverlayType.MARKER,
-          drawingControl: true,
-          drawingControlOptions: {
-            position: google.maps.ControlPosition.TOP_CENTER,
-            drawingModes: [
-              google.maps.drawing.OverlayType.MARKER,
-              google.maps.drawing.OverlayType.CIRCLE,
-              google.maps.drawing.OverlayType.POLYGON,
-              google.maps.drawing.OverlayType.POLYLINE,
-              google.maps.drawing.OverlayType.RECTANGLE
-            ]
-          },
-          markerOptions: {icon: 'images/beachflag.png'},
-          circleOptions: {
-            fillColor: '#ffff00',
-            fillOpacity: .1,
-            strokeWeight: 1,
-            clickable: false,
-            editable: true,
-            zIndex: 1
-          }
-        });
-        drawingManager.setMap(map);
-      }
-      "http://maps.googleapis.com/maps/api/js?libraries=places&sensor=false"
-    </script>
-    <script src="https://maps.googleapis.com/maps/api/js?libraries=drawing&callback=initMap"
-            async defer></script>
   </body>
+
 </html>
