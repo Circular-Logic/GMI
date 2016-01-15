@@ -5,7 +5,7 @@ var service;
 var markers = [];
 
 //  Displays map
-function initialize(){
+function initMap(){
   var center = new google.maps.LatLng(34.0569172,-117.8239381);
   map = new google.maps.Map(document.getElementById('map'),{
     center: center,zoom:11
@@ -16,9 +16,33 @@ function initialize(){
     radius: 8047,
     types: ['atm']
   };
+
   infowindow = new google.maps.InfoWindow();
   var service = new google.maps.places.PlacesService(map);
   service.nearbySearch(request, callback);
+
+  var drawingManager = new google.maps.drawing.DrawingManager({
+    drawingMode: google.maps.drawing.OverlayType.MARKER,
+    drawingControl: true,
+    drawingControlOptions: {
+      position: google.maps.ControlPosition.TOP_CENTER,
+      drawingModes: [
+        google.maps.drawing.OverlayType.CIRCLE,
+        google.maps.drawing.OverlayType.POLYGON,
+        google.maps.drawing.OverlayType.POLYLINE,
+        google.maps.drawing.OverlayType.RECTANGLE
+      ]
+    },
+    circleOptions: {
+      fillColor: '#ffff00',
+      fillOpacity: .1,
+      strokeWeight: 1,
+      clickable: false,
+      editable: true,
+      zIndex: 1
+    }
+  });
+  drawingManager.setMap(map);
 
 
   //User can search by region when they right click a section on the map. Radius is set to
@@ -79,5 +103,5 @@ function clear(markers){
   }
   markers = []
 }
-//Displays results when page is fully loaded
-google.maps.event.addDomListener(window,'load',initialize);
+////Displays results when page is fully loaded
+//google.maps.event.addDomListener(window,'load',initialize);
