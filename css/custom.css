@@ -1,0 +1,16 @@
+.jumbotron{
+	padding-left: 0px;
+	background-color: #0099FF;
+	color: #000000;
+	text-align: center;
+}
+
+.jumbotron h1{
+	font-weight: bold;
+}
+
+.start_button{
+	text-align: center;
+}
+
+
