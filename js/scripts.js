@@ -12,7 +12,6 @@ function initMap(){
     center: center,zoom:13
   });
 
-  //Google maps shape drawer
   var drawingManager = new google.maps.drawing.DrawingManager({
     drawingMode: google.maps.drawing.OverlayType.MARKER,
     drawingControl: true,
@@ -34,17 +33,6 @@ function initMap(){
     }
   });
   drawingManager.setMap(map);
-
-
-
-  //Autocomplete functionality
-  // var ac = new google.maps.places.Autocomplete(document.getElementById('autocomplete'));
-  // google.maps.event.addListener(ac, 'place_changed', function(){
-    // var place = ac.getPlace();
-    // console.log(place.formatted_address);
-    // console.log(place.url);
-    // console.log(place.geometry.location);
-  // });
 
   // Create the search box and link it to the UI element.
   var input = document.getElementById('autocomplete');
