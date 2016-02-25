@@ -11,15 +11,15 @@ function initMap(){
     center: center,zoom:13
   });
 
-  request = {
-    location: center,
-    radius: 8047,
-    types: ['food']
-  };
-
-  infowindow = new google.maps.InfoWindow();
-  var service = new google.maps.places.PlacesService(map);
-  service.nearbySearch(request, callback);
+//  request = {
+//    location: center,
+//    radius: 8047,
+//    types: ['none'],
+//  };
+//
+//  infowindow = new google.maps.InfoWindow();
+//  var service = new google.maps.places.PlacesService(map);
+//  service.nearbySearch(request, callback);
 
   var drawingManager = new google.maps.drawing.DrawingManager({
     drawingMode: google.maps.drawing.OverlayType.MARKER,
@@ -111,24 +111,21 @@ function initMap(){
 
 
 
-
-
-
   //User can search by region when they right click a section on the map. Radius is set to
   //5 miles to start and looks only for places containing atm for demostration.
 
-  google.maps.event.addListener(map, 'rightclick', function(event){
-    map.setCenter(event.latLng)
-    clearResults(markers)
-
-    var request = {
-      location: event.latLng,
-      radius:8047,
-      types:['atm']
-    };
-    service.nearbySearch(request, callback);
-
-  })
+//  google.maps.event.addListener(map, 'rightclick', function(event){
+//    map.setCenter(event.latLng)
+//    clearResults(markers)
+//
+//    var request = {
+//      location: event.latLng,
+//      radius:8047,
+//      types:['atm']
+//    };
+//    service.nearbySearch(request, callback);
+//
+//  })
 
 }
 
