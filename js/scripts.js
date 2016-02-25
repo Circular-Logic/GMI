@@ -11,6 +11,7 @@ function initMap(){
     center: center,zoom:13
   });
 
+
 //  request = {
 //    location: center,
 //    radius: 8047,
@@ -20,6 +21,17 @@ function initMap(){
 //  infowindow = new google.maps.InfoWindow();
 //  var service = new google.maps.places.PlacesService(map);
 //  service.nearbySearch(request, callback);
+
+  // request = {
+    // location: center,
+    // radius: 8047,
+    // types: ['sushi']
+  // };
+
+  infowindow = new google.maps.InfoWindow();
+  var service = new google.maps.places.PlacesService(map);
+  service.nearbySearch(request, callback);
+
 
   var drawingManager = new google.maps.drawing.DrawingManager({
     drawingMode: google.maps.drawing.OverlayType.MARKER,
