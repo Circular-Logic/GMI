@@ -2,6 +2,7 @@ var map;
 var infowindow;
 var request;
 var service;
+var drawn_shape;
 var markers = [];
 
 //  Displays map
@@ -11,16 +12,7 @@ function initMap(){
     center: center,zoom:13
   });
 
-  // request = {
-    // location: center,
-    // radius: 8047,
-    // types: ['sushi']
-  // };
-
-  infowindow = new google.maps.InfoWindow();
-  var service = new google.maps.places.PlacesService(map);
-  service.nearbySearch(request, callback);
-
+  //Google maps shape drawer
   var drawingManager = new google.maps.drawing.DrawingManager({
     drawingMode: google.maps.drawing.OverlayType.MARKER,
     drawingControl: true,
@@ -46,13 +38,13 @@ function initMap(){
 
 
   //Autocomplete functionality
-  var ac = new google.maps.places.Autocomplete(document.getElementById('autocomplete'));
-  google.maps.event.addListener(ac, 'place_changed', function(){
-    var place = ac.getPlace();
-    console.log(place.formatted_address);
-    console.log(place.url);
-    console.log(place.geometry.location);
-  });
+  // var ac = new google.maps.places.Autocomplete(document.getElementById('autocomplete'));
+  // google.maps.event.addListener(ac, 'place_changed', function(){
+    // var place = ac.getPlace();
+    // console.log(place.formatted_address);
+    // console.log(place.url);
+    // console.log(place.geometry.location);
+  // });
 
   // Create the search box and link it to the UI element.
   var input = document.getElementById('autocomplete');
@@ -73,12 +65,9 @@ function initMap(){
     if (places.length == 0) {
       return;
     }
-
+	
     // Clear out the old markers.
-    markers.forEach(function(marker) {
-      marker.setMap(null);
-    });
-    markers = [];
+    clear(markers);
 
     // For each place, get the icon, name and location.
     var bounds = new google.maps.LatLngBounds();
@@ -108,29 +97,18 @@ function initMap(){
     });
     map.fitBounds(bounds);
   });
-
-
-
-
-
-
-  //User can search by region when they right click a section on the map. Radius is set to
-  //5 miles to start and looks only for places containing atm for demostration.
-
-  google.maps.event.addListener(map, 'rightclick', function(event){
-    map.setCenter(event.latLng)
-    clearResults(markers)
-
-    var request = {
-      location: event.latLng,
-      radius:8047,
-      types:['atm']
-    };
-    service.nearbySearch(request, callback);
-
-  })
-
+  
+  //Listens for any drawing events with circle rectangle or polygon
+  google.maps.event.addListener(drawingManager, 'overlaycomplete', function(event){
+	  if(drawn_shape != null){
+		drawn_shape.overlay.setMap(null);
+		drawn_shape = null;
+	  } 
+	  drawn_shape = event;
+  });
 }
+
+
 
 //Displays results
 function callback(results, status){
