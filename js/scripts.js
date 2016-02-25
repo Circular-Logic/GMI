@@ -11,11 +11,11 @@ function initMap(){
     center: center,zoom:13
   });
 
-  request = {
-    location: center,
-    radius: 8047,
-    types: ['food']
-  };
+  // request = {
+    // location: center,
+    // radius: 8047,
+    // types: ['sushi']
+  // };
 
   infowindow = new google.maps.InfoWindow();
   var service = new google.maps.places.PlacesService(map);
