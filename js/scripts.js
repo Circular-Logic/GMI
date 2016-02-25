@@ -12,26 +12,8 @@ function initMap(){
     center: center,zoom:13
   });
 
-  var drawingManager = new google.maps.drawing.DrawingManager({
-    drawingMode: google.maps.drawing.OverlayType.MARKER,
-    drawingControl: true,
-    drawingControlOptions: {
-      position: google.maps.ControlPosition.TOP_CENTER,
-      drawingModes: [
-        google.maps.drawing.OverlayType.CIRCLE,
-        google.maps.drawing.OverlayType.POLYGON,
-        google.maps.drawing.OverlayType.RECTANGLE
-      ]
-    },
-    circleOptions: {
-      fillColor: '#ffff00',
-      fillOpacity: .2,
-      strokeWeight: .1,
-      clickable: true,
-      editable: true,
-      zIndex: 1
-    }
-  });
+  //create drawing manager at center
+  var drawingManager = create_draw_manager();
   drawingManager.setMap(map);
 
   // Create the search box and link it to the UI element.
@@ -43,8 +25,7 @@ function initMap(){
   map.addListener('bounds_changed', function() {
     searchBox.setBounds(map.getBounds());
   });
-
-  var markers = [];
+  
   // Listen for the event fired when the user selects a prediction and retrieve
   // more details for that place.
   searchBox.addListener('places_changed', function() {
@@ -93,10 +74,41 @@ function initMap(){
 		drawn_shape = null;
 	  } 
 	  drawn_shape = event;
+	  drawingManager.setDrawingMode(null);
   });
 }
 
-
+function create_draw_manager(){
+	drawingManager = new google.maps.drawing.DrawingManager({
+		drawingMode: google.maps.drawing.OverlayType.MARKER,
+		drawingControl: true,
+		drawingControlOptions: {
+		  position: google.maps.ControlPosition.TOP_CENTER,
+		  drawingModes: [
+			google.maps.drawing.OverlayType.CIRCLE,
+			google.maps.drawing.OverlayType.POLYGON,
+			google.maps.drawing.OverlayType.RECTANGLE
+		  ]
+		},
+		circleOptions: {
+		  fillColor: '#ffff00',
+		  fillOpacity: .2,
+		  strokeWeight: .1,
+		  clickable: true,
+		  editable: true,
+		  zIndex: 1
+		},
+		rectangleOptions:{
+			fillColor: '#ffff00',
+			fillOpacity: .2,
+			strokeWeight: .1,
+			clickable: true,
+			editable: true,
+			zIndex: 1
+		}
+	});
+	return drawingManager;
+}
 
 //Displays results
 function callback(results, status){
@@ -132,3 +144,8 @@ function clear(markers){
 }
 //Displays results when page is fully loaded
 //google.maps.event.addDomListener(window,'load',initialize);
+
+//hides or jumbotron depending which one we wanna use
+function hide_jumbotron(){
+	document.getElementById("jumbo").style.display="none";
+}
