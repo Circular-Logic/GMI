@@ -3,6 +3,7 @@ var infowindow;
 var request;
 var service;
 var drawn_shape;
+var infoWindow;
 var can_change_zoom = true;
 var markers = [];
 
@@ -31,7 +32,7 @@ function initMap(){
 	  can_change_zoom = true;
   });
   
- 
+  infoWindow = new google.maps.InfoWindow();
   // Listen for the event fired when the user selects a prediction and retrieve
   // more details for that place.
   searchBox.addListener('places_changed', function() {
@@ -107,12 +108,17 @@ function create_icon(place){
 }
 
 function push_marker(place, icon){
-	markers.push(new google.maps.Marker({
+	var marker = new google.maps.Marker({
 		map: map,
 		icon: icon,
 		title: place.name,
 		position: place.geometry.location
-	}));
+	});
+	marker.addListener('click', function(){//makes markers clickable
+		infoWindow.setContent(place.name);
+		infoWindow.open(map, marker);
+	});
+	markers.push(marker);
 }
 
 function place_marker_info(place, bounds){
