@@ -14,6 +14,7 @@ function initMap(){
     center: center,zoom:13
   });
 
+
   //create drawing manager at center
   var drawingManager = create_draw_manager();
   drawingManager.setMap(map);
@@ -32,6 +33,7 @@ function initMap(){
 	  can_change_zoom = true;
   });
   
+  //infowindow for the markers
   infoWindow = new google.maps.InfoWindow();
   // Listen for the event fired when the user selects a prediction and retrieve
   // more details for that place.
@@ -110,12 +112,13 @@ function create_icon(place){
 function push_marker(place, icon){
 	var marker = new google.maps.Marker({
 		map: map,
-		icon: icon,
+		//icon: icon,
 		title: place.name,
 		position: place.geometry.location
 	});
+	var content_string = place.name.bold() + '<br>' + "Price Level: " + place.price_level;
 	marker.addListener('click', function(){//makes markers clickable
-		infoWindow.setContent(place.name);
+		infoWindow.setContent(content_string);
 		infoWindow.open(map, marker);
 	});
 	markers.push(marker);
@@ -133,7 +136,6 @@ function place_marker_info(place, bounds){
 
 function create_draw_manager(){
 	drawingManager = new google.maps.drawing.DrawingManager({
-		drawingMode: google.maps.drawing.OverlayType.MARKER,
 		drawingControl: true,
 		drawingControlOptions: {
 		  position: google.maps.ControlPosition.TOP_CENTER,
@@ -172,23 +174,7 @@ function create_draw_manager(){
   // }
 // }
 
-//Create markers for results
-// function createMarker(place){
-  // var placeLoc = place.geometry.location;
-  // var marker = new google.maps.Marker({
-    // map:map,
-    // position: placeLoc
-  // });
-
-  // //Shows more info when marker is clicked
-  // google.maps.event.addListener(marker, 'click', function(){
-    // infowindow.setContent(place.name);
-    // infowindow.open(map, this);
-  // });
-  // return marker;
-// }
-
-//Clears markers when right click
+//Clears markers 
 function clear(markers){
   for(var marks in markers){
     markers[marks].setMap(null)
