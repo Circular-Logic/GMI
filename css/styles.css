@@ -1,9 +1,9 @@
 html,body, #map{
   height: 100%;
   margin: 0px;
-  padding: 0px;
-  background-color: gray;
+  padding-top: 25px;
 }
+
 #autocomplete{
   background-color: #fff;
   font-family: Roboto;
@@ -14,4 +14,8 @@ html,body, #map{
   padding-top: 10;
   text-overflow: ellipsis;
   width: 300px;
+}
+
+#map{
+	margin-bottom: 80%;
 }
