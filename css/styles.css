@@ -5,12 +5,13 @@ html,body, #map{
   background-color: gray;
 }
 #autocomplete{
-  width: 215px;
-  margin-top: 3px;
-  margin-bottom: 3px;
-  margin-left: 3px;
-  margin-right: 3px;
-
-  padding-right: 5px;
-  float: right;
+  background-color: #fff;
+  font-family: Roboto;
+  font-size: 15px;
+  font-weight: 300;
+  margin-left: 12px;
+  margin-top: 10px;
+  padding-top: 10;
+  text-overflow: ellipsis;
+  width: 300px;
 }
