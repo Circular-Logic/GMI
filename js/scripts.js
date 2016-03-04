@@ -19,6 +19,8 @@ function initMap(){
 			position: google.maps.ControlPosition.RIGHT_CENTER
 		}
 	});
+	
+	map.addListener('tilesloaded', function() {});
 
 
 	//create drawing manager at center
