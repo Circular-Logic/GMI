@@ -44,7 +44,7 @@ function initMap(){
 	// Listen for the event fired when the user selects a prediction and retrieve
 	// more details for that place.
 	searchBox.addListener('places_changed', function() {
-		hide_jumbotron();
+		//hide_jumbotron();
 		var places = searchBox.getPlaces();
 
 		if (places.length == 0) {
@@ -192,6 +192,6 @@ function clear(markers){
 //google.maps.event.addDomListener(window,'load',initialize);
 
 //hides or jumbotron depending which one we wanna use
-function hide_jumbotron(){
-	document.getElementById("jumbo").style.display="none";
-}
+// function hide_jumbotron(){
+	// document.getElementById("jumbo").style.display="none";
+// }
