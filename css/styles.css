@@ -1,9 +1,8 @@
-html,body, #map{
+/* html, body, #map{
   height: 100%;
   margin: 0px;
   padding-top: 25px;
-}
-
+} */
 #autocomplete{
   background-color: #fff;
   font-family: Roboto;
@@ -17,5 +16,15 @@ html,body, #map{
 }
 
 #map{
-	margin-bottom: 80%;
+	width: 100%;
+	height: 100%;
+	position: absolute;
+}
+
+#side_bar{
+	display: none;
+	width: 30%;
+	height: 100%;
+	position: absolute;
+	background-color: #fff;
 }

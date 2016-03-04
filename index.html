@@ -24,7 +24,7 @@
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBqS-0C9Vj4EsjdqpOmf2goXpg0q5BSZ9E&libraries=places,drawing&callback=initMap" async defer></script>
   </head>
   <body>
-	  <nav class="navbar navbar-inverse navbar-fixed-top">
+	  <!-- <nav class="navbar navbar-inverse navbar-fixed-top">
 		<div class="container">
 		  <div class="navbar-header">
 			<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
@@ -54,16 +54,25 @@
 			</ul>
 		  </div>
 		</div>
-	  </nav>
+	  </nav> -->
 
     <!--Search Bar-->
     <div id="Menu-bar">
     <input id="autocomplete" class="controls" type="text" placeholder="Enter Place">
 
     </div>
+	<table border=1>
+      <tr>
+        <td>
+           <div id="map"></div>
+        </td>
+        <td>
+           <div id="side_bar"></div>
+        </td>
+      </tr>
+    </table>
     <!--Container for Google Maps-->
-    <div id="map"></div>
-
+    <!-- <div id="map">	</div> -->
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
     <!-- Include all compiled plugins (below), or include individual files as needed -->

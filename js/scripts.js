@@ -44,7 +44,7 @@ function initMap(){
 	// Listen for the event fired when the user selects a prediction and retrieve
 	// more details for that place.
 	searchBox.addListener('places_changed', function() {
-		//hide_jumbotron();
+		toggle_sidebar();
 		var places = searchBox.getPlaces();
 
 		if (places.length == 0) {
@@ -188,10 +188,12 @@ function clear(markers){
 	}
 	markers = [];
 }
+
+function toggle_sidebar(){
+	document.getElementById("side_bar").style.display="inline";
+	document.getElementById("map").style.width="70%";
+	document.getElementById("map").style.left="30%";
+}
 //Displays results when page is fully loaded
 //google.maps.event.addDomListener(window,'load',initialize);
 
-//hides or jumbotron depending which one we wanna use
-// function hide_jumbotron(){
-	// document.getElementById("jumbo").style.display="none";
-// }
