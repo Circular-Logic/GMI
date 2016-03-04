@@ -9,93 +9,100 @@ var markers = [];
 
 //  Displays map
 function initMap(){
-  var center = new google.maps.LatLng(34.0569172,-117.8239381);
-  map = new google.maps.Map(document.getElementById('map'),{
-    center: center,zoom:13
-  });
-
-
-  //create drawing manager at center
-  var drawingManager = create_draw_manager();
-  drawingManager.setMap(map);
-
-  // Create the search box and link it to the UI element.
-  var input = document.getElementById('autocomplete');
-  var searchBox = new google.maps.places.SearchBox(input);
-  map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
-
-  // Bias the SearchBox results towards current map's viewport.
-  map.addListener('bounds_changed', function() {
-    searchBox.setBounds(map.getBounds());
-  });
-  
-  map.addListener('zoom_changed', function(){
-	  can_change_zoom = true;
-  });
-  
-  //infowindow for the markers
-  infoWindow = new google.maps.InfoWindow();
-  // Listen for the event fired when the user selects a prediction and retrieve
-  // more details for that place.
-  searchBox.addListener('places_changed', function() {
-    var places = searchBox.getPlaces();
-	
-    if (places.length == 0) {
-      return;
-    }
-	
-    // Clear out the old markers.
-    clear(markers);
-
-    // For each place, get the icon, name and location and place them into map
-    bounds = new google.maps.LatLngBounds();
-    places.forEach(function(place) {
-		var icon = create_icon(place);
-		if(drawn_shape == null){
-			push_marker(place, icon);
-			place_marker_info(place, bounds);
+	var center = new google.maps.LatLng(34.0569172,-117.8239381);
+	map = new google.maps.Map(document.getElementById('map'),{
+		center: center,zoom:13,
+		zoomControlOptions: {
+			position: google.maps.ControlPosition.RIGHT_CENTER
+		},
+		streetViewControlOptions: {
+			position: google.maps.ControlPosition.RIGHT_CENTER
 		}
-		else if(drawn_shape.type == google.maps.drawing.OverlayType.POLYGON){
-			if(google.maps.geometry.poly.containsLocation(place.geometry.location, drawn_shape.overlay)){
-				push_marker(place, icon);	
-				place_marker_info(place, bounds);
-			}
-		}
-		else if(drawn_shape.type == google.maps.drawing.OverlayType.CIRCLE){
-			if(google.maps.geometry.spherical.computeDistanceBetween(place.geometry.location, 
-				drawn_shape.overlay.getCenter()) <= drawn_shape.overlay.getRadius()){
-				push_marker(place, icon);
-				place_marker_info(place, bounds);					
-			}
-		}
-		else if(drawn_shape.type == google.maps.drawing.OverlayType.RECTANGLE){
-			if(drawn_shape.overlay.getBounds().contains(place.geometry.location)){
-				push_marker(place, icon);	
-				place_marker_info(place, bounds);
-			}
-		}
-		
 	});
-    if(can_change_zoom){
-		map.fitBounds(bounds);
-		can_change_zoom = false;
-	}
-	if(drawn_shape != null){
-		drawn_shape.overlay.setMap(null);
-		drawn_shape = null;
-	} 	
-  });
-  
-  //Listens for any drawing events with circle rectangle or polygon
-  google.maps.event.addListener(drawingManager, 'overlaycomplete', function(event){
-	  can_change_zoom = true;
-	  if(drawn_shape != null){
-		drawn_shape.overlay.setMap(null);
-		drawn_shape = null;
-	  } 
-	  drawn_shape = event;
-	  drawingManager.setDrawingMode(null);
-  });
+
+
+	//create drawing manager at center
+	var drawingManager = create_draw_manager();
+	drawingManager.setMap(map);
+
+	// Create the search box and link it to the UI element.
+	var input = document.getElementById('autocomplete');
+	var searchBox = new google.maps.places.SearchBox(input);
+	map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
+
+	// Bias the SearchBox results towards current map's viewport.
+	map.addListener('bounds_changed', function() {
+		searchBox.setBounds(map.getBounds());
+	});
+
+	map.addListener('zoom_changed', function(){
+		can_change_zoom = true;
+	});
+
+	//infowindow for the markers
+	infoWindow = new google.maps.InfoWindow();
+	// Listen for the event fired when the user selects a prediction and retrieve
+	// more details for that place.
+	searchBox.addListener('places_changed', function() {
+		hide_jumbotron();
+		var places = searchBox.getPlaces();
+
+		if (places.length == 0) {
+			return;
+		}
+
+		// Clear out the old markers.
+		clear(markers);
+
+		// For each place, get the icon, name and location and place them into map
+		bounds = new google.maps.LatLngBounds();
+		places.forEach(function(place) {
+			var icon = create_icon(place);
+			if(drawn_shape == null){
+				push_marker(place, icon);
+				place_marker_info(place, bounds);
+			}
+			else if(drawn_shape.type == google.maps.drawing.OverlayType.POLYGON){
+				if(google.maps.geometry.poly.containsLocation(place.geometry.location, drawn_shape.overlay)){
+					push_marker(place, icon);	
+					place_marker_info(place, bounds);
+				}
+			}
+			else if(drawn_shape.type == google.maps.drawing.OverlayType.CIRCLE){
+				if(google.maps.geometry.spherical.computeDistanceBetween(place.geometry.location, 
+					drawn_shape.overlay.getCenter()) <= drawn_shape.overlay.getRadius()){
+					push_marker(place, icon);
+					place_marker_info(place, bounds);					
+				}
+			}
+			else if(drawn_shape.type == google.maps.drawing.OverlayType.RECTANGLE){
+				if(drawn_shape.overlay.getBounds().contains(place.geometry.location)){
+					push_marker(place, icon);	
+					place_marker_info(place, bounds);
+				}
+			}
+			
+		});
+		if(can_change_zoom){
+			map.fitBounds(bounds);
+			can_change_zoom = false;
+		}
+		if(drawn_shape != null){
+			drawn_shape.overlay.setMap(null);
+			drawn_shape = null;
+		} 	
+	});
+
+	//Listens for any drawing events with circle rectangle or polygon
+	google.maps.event.addListener(drawingManager, 'overlaycomplete', function(event){
+		can_change_zoom = true;
+		if(drawn_shape != null){
+			drawn_shape.overlay.setMap(null);
+			drawn_shape = null;
+		} 
+		drawn_shape = event;
+		drawingManager.setDrawingMode(null);
+	});
 }
 
 function create_icon(place){
@@ -176,10 +183,10 @@ function create_draw_manager(){
 
 //Clears markers 
 function clear(markers){
-  for(var marks in markers){
-    markers[marks].setMap(null)
-  }
-  markers = [];
+	for(var marks in markers){
+	markers[marks].setMap(null)
+	}
+	markers = [];
 }
 //Displays results when page is fully loaded
 //google.maps.event.addDomListener(window,'load',initialize);
