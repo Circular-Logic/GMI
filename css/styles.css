@@ -27,11 +27,26 @@
 	height: 100%;
 	position: absolute;
 	background-color: #fff;
+	border-right-style: solid;
+	border-bottom-style: solid;
+	border-top-style: solid;
+}
+
+#ratings{
+	position: fixed;
+	bottom: 5px;
+	font-weight: bold;
+	color: #000;
+}
+
+#ratings .btn{
+	background-color: #000;
+	color: #fff;
 }
 
 #buttons {
 	position: fixed;
-	bottom: 5px;
+	bottom: 80px;
 	font-weight: bold;
 	color: #000;
 }

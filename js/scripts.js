@@ -5,6 +5,10 @@ var service;
 var drawn_shape;
 var infoWindow;
 var searchBox;
+var price_filter = false;
+var rate_filter = false;
+var pricing;
+var rating;
 var markers = [];
 var places_array = [];
 
@@ -190,6 +194,16 @@ function myclick(i){
 }
 
 function sort_by_price(price){
+	if(price == 0) price_filter = false;
+	else{
+		price_filter = true;
+		pricing = price;
+	}
+	if(rate_filter) sort_by_both(price, rating);
+	else price_loop(price);
+}
+
+function price_loop(price){
 	var side_bar_html = "";
 	clear_markers();
 	places_array.forEach(function(place){
@@ -204,7 +218,66 @@ function sort_by_price(price){
 			push_marker(place, icon);
 			side_bar_html += '<a href="javascript:myclick(' + (markers.length-1) + ')">' + place.name + '<\/a><br>';
 		}
+	});
+	document.getElementById("places").innerHTML = side_bar_html;
+}
 
+function sort_by_rating(rate){
+	if(rate == 0) rate_filter = false;
+	else{
+		rate_filter = true;
+		rating = rate;
+	}
+	if(price_filter) sort_by_both(pricing, rate);
+	else rating_loop(rate);
+}
+
+function rating_loop(rate){
+	var side_bar_html = "";
+	clear_markers();
+	places_array.forEach(function(place){
+		var icon = create_icon(place);
+		if(rate != 0){
+			if(place.rating >= rate){
+				push_marker(place, icon);
+				side_bar_html += '<a href="javascript:myclick(' + (markers.length-1) + ')">' + place.name + '<\/a><br>';
+			}
+		}
+		else{
+			push_marker(place, icon);
+			side_bar_html += '<a href="javascript:myclick(' + (markers.length-1) + ')">' + place.name + '<\/a><br>';
+		}
+	});
+	document.getElementById("places").innerHTML = side_bar_html;
+}
+
+function sort_by_both(price, rate){
+	var side_bar_html = "";
+	clear_markers();
+	places_array.forEach(function(place){
+		var icon = create_icon(place);
+		if(price != 0 && rate != 0){
+			if(place.price_level == price && place.rating >= rate){
+				push_marker(place, icon);
+				side_bar_html += '<a href="javascript:myclick(' + (markers.length-1) + ')">' + place.name + '<\/a><br>';
+			}
+		}
+		else if(price == 0){
+			if(place.rating >= rate){
+				push_marker(place, icon);
+				side_bar_html += '<a href="javascript:myclick(' + (markers.length-1) + ')">' + place.name + '<\/a><br>';
+			}
+		}
+		else if(rate == 0){
+			if(place.price_level == price){
+				push_marker(place, icon);
+				side_bar_html += '<a href="javascript:myclick(' + (markers.length-1) + ')">' + place.name + '<\/a><br>';
+			}
+		}
+		else{
+			push_marker(place, icon);
+			side_bar_html += '<a href="javascript:myclick(' + (markers.length-1) + ')">' + place.name + '<\/a><br>';
+		}
 	});
 	document.getElementById("places").innerHTML = side_bar_html;
 }
