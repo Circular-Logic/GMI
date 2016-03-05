@@ -23,8 +23,24 @@
 
 #side_bar{
 	display: none;
-	width: 30%;
+	width: 20%;
 	height: 100%;
 	position: absolute;
 	background-color: #fff;
+}
+
+#buttons {
+	position: fixed;
+	bottom: 5px;
+	font-weight: bold;
+	color: #000;
+}
+
+#buttons .btn{
+	background-color: #000;
+	color: #fff;
+}
+
+#places{
+	font-weight: bold;
 }

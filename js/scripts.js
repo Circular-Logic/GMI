@@ -4,12 +4,12 @@ var request;
 var service;
 var drawn_shape;
 var infoWindow;
-var can_change_zoom = true;
+var searchBox;
 var markers = [];
+var places_array = [];
 
 //  Displays map
 function initMap(){
-	var side_bar_html = "";
 	var center = new google.maps.LatLng(34.0569172,-117.8239381);
 	map = new google.maps.Map(document.getElementById('map'),{
 		center: center,zoom:13,
@@ -29,16 +29,12 @@ function initMap(){
 
 	// Create the search box and link it to the UI element.
 	var input = document.getElementById('autocomplete');
-	var searchBox = new google.maps.places.SearchBox(input);
+	searchBox = new google.maps.places.SearchBox(input);
 	map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
 
 	// Bias the SearchBox results towards current map's viewport.
 	map.addListener('bounds_changed', function() {
 		searchBox.setBounds(map.getBounds());
-	});
-
-	map.addListener('zoom_changed', function(){
-		can_change_zoom = true;
 	});
 
 	//infowindow for the markers
@@ -47,6 +43,7 @@ function initMap(){
 	// more details for that place.
 	searchBox.addListener('places_changed', function() {
 		toggle_sidebar();
+		var side_bar_html = "";
 		var places = searchBox.getPlaces();
 
 		if (places.length == 0) {
@@ -78,33 +75,29 @@ function initMap(){
 				if(drawn_shape.overlay.getBounds().contains(place.geometry.location)){
 					side_bar_html = push_place_sidebar(place, icon, bounds, side_bar_html);
 				}
-			}
-			
+			}	
 		});
-		if(can_change_zoom){
-			map.fitBounds(bounds);
-			can_change_zoom = false;
-		}
 		if(drawn_shape != null){
 			drawn_shape.overlay.setMap(null);
 			drawn_shape = null;
 		}
-		document.getElementById("side_bar").innerHTML = side_bar_html;
+		document.getElementById("places").innerHTML = side_bar_html;
 	});
 
 	//Listens for any drawing events with circle rectangle or polygon
 	google.maps.event.addListener(drawingManager, 'overlaycomplete', function(event){
-		can_change_zoom = true;
 		if(drawn_shape != null){
 			drawn_shape.overlay.setMap(null);
 			drawn_shape = null;
 		} 
 		drawn_shape = event;
 		drawingManager.setDrawingMode(null);
+		if(markers.length != 0) google.maps.event.trigger(searchBox, 'places_changed');
 	});
 }
 
 function push_place_sidebar(place, icon, bounds, side_bar_html){
+	places.push(place);
 	push_marker(place, icon);
 	place_marker_info(place, bounds);
 	side_bar_html += '<a href="javascript:myclick(' + (markers.length-1) + ')">' + place.name + '<\/a><br>';
@@ -178,32 +171,30 @@ function create_draw_manager(){
 	return drawingManager;
 }
 
-//Displays results
-// function callback(results, status){
-  // if(status == google.maps.places.PlacesServiceStatus.OK){
-    // for(var i = 0; i < results.length; i++){
-      // markers.push(createMarker(results[i]));
-    // }
-  // }
-// }
-
 //Clears markers 
 function clear(markers){
 	for(var marks in markers){
-	markers[marks].setMap(null)
+		markers[marks].setMap(null)
 	}
 	markers = [];
 }
 
 function toggle_sidebar(){
 	document.getElementById("side_bar").style.display="inline";
-	document.getElementById("map").style.width="70%";
-	document.getElementById("map").style.left="30%";
+	document.getElementById("map").style.width="80%";
+	document.getElementById("map").style.left="20%";
 }
 
 function myclick(i){
 	google.maps.event.trigger(markers[i], 'click');
 }
-//Displays results when page is fully loaded
-//google.maps.event.addDomListener(window,'load',initialize);
+
+function sort_by_price(){
+	var side_bar_html = "";
+	places_array.forEach(function(place){
+		if(place.price == 2){
+			var icon = create_icon(place);
+		}
+	});
+}
 

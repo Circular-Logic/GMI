@@ -1,15 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
-    <title>GMI</title>
+	<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+	<title>GMI</title>
 
-    <!-- Bootstrap -->
-    <link href="css/bootstrap.min.css" rel="stylesheet">
-	
+	<!-- Bootstrap -->
+	<link href="css/bootstrap.min.css" rel="stylesheet">
+
 	<!-- Custom StyleSheets Placed Here -->
 	<link href="css/custom.css" rel="stylesheet">
 	<link href="css/styles.css" rel="stylesheet">
@@ -21,10 +21,10 @@
 	<link href="css/styles.css" rel="stylesheet">
 
 	<!--    Google API-->
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBqS-0C9Vj4EsjdqpOmf2goXpg0q5BSZ9E&libraries=places,drawing&callback=initMap" async defer></script>
-  </head>
-  <body>
-	  <!-- <nav class="navbar navbar-inverse navbar-fixed-top">
+	<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBqS-0C9Vj4EsjdqpOmf2goXpg0q5BSZ9E&libraries=places,drawing&callback=initMap" async defer></script>
+	</head>
+	<body>
+		<!-- <nav class="navbar navbar-inverse navbar-fixed-top">
 		<div class="container">
 		  <div class="navbar-header">
 			<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
@@ -54,30 +54,39 @@
 			</ul>
 		  </div>
 		</div>
-	  </nav> -->
+		</nav> -->
 
-    <!--Search Bar-->
-    <div id="Menu-bar">
-    <input id="autocomplete" class="controls" type="text" placeholder="Enter Place">
+		<!--Search Bar-->
+		<div id="Menu-bar">
+			<input id="autocomplete" class="controls" type="text" placeholder="Enter Place">
+		</div>
+		<table border=1>
+			<tr>
+				<td>
+				   <div id="map"></div>
+				</td>
+				<td>
+					<div id="side_bar">
+						<div id="places">
+						</div>
+						<div id="buttons">
+							<p>Price Level</p>
+							<a href="#" class="btn" role="button" id="button1">1</a>
+							<a href="#" class="btn" role="button" id="button2">2</a>
+							<a href="#" class="btn" role="button" id="button3">3</a>
+							<a href="#" class="btn" role="button" id="button3">4</a>
+						</div>
+					</div>
+				</td>
+			</tr>
+		</table>
+		<!--Container for Google Maps-->
+		<!-- <div id="map">	</div> -->
+		<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+		<!-- Include all compiled plugins (below), or include individual files as needed -->
+		<script src="js/bootstrap.min.js"></script>
 
-    </div>
-	<table border=1>
-      <tr>
-        <td>
-           <div id="map"></div>
-        </td>
-        <td>
-           <div id="side_bar"></div>
-        </td>
-      </tr>
-    </table>
-    <!--Container for Google Maps-->
-    <!-- <div id="map">	</div> -->
-    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-    <!-- Include all compiled plugins (below), or include individual files as needed -->
-    <script src="js/bootstrap.min.js"></script>
-
-    <script src="js/scripts.js"></script>
-  </body>
+		<script src="js/scripts.js"></script>
+	</body>
 </html>
