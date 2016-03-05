@@ -51,7 +51,8 @@ function initMap(){
 		}
 
 		// Clear out the old markers.
-		clear(markers);
+		clear_markers();
+		places_array = [];
 
 		// For each place, get the icon, name and location and place them into map
 		bounds = new google.maps.LatLngBounds();
@@ -97,9 +98,8 @@ function initMap(){
 }
 
 function push_place_sidebar(place, icon, bounds, side_bar_html){
-	places.push(place);
+	places_array.push(place);
 	push_marker(place, icon);
-	place_marker_info(place, bounds);
 	side_bar_html += '<a href="javascript:myclick(' + (markers.length-1) + ')">' + place.name + '<\/a><br>';
 	return side_bar_html
 }
@@ -130,15 +130,15 @@ function push_marker(place, icon){
 	markers.push(marker);
 }
 
-function place_marker_info(place, bounds){
-	if (place.geometry.viewport) {
-		// Only geocodes have viewport.
-		bounds.union(place.geometry.viewport);
-		} 
-	else {
-		bounds.extend(place.geometry.location);
-	}
-}
+// function place_marker_info(place, bounds){
+	// if (place.geometry.viewport) {
+		// // Only geocodes have viewport.
+		// bounds.union(place.geometry.viewport);
+		// } 
+	// else {
+		// bounds.extend(place.geometry.location);
+	// }
+// }
 
 function create_draw_manager(){
 	drawingManager = new google.maps.drawing.DrawingManager({
@@ -172,7 +172,7 @@ function create_draw_manager(){
 }
 
 //Clears markers 
-function clear(markers){
+function clear_markers(){
 	for(var marks in markers){
 		markers[marks].setMap(null)
 	}
@@ -189,12 +189,23 @@ function myclick(i){
 	google.maps.event.trigger(markers[i], 'click');
 }
 
-function sort_by_price(){
+function sort_by_price(price){
 	var side_bar_html = "";
+	clear_markers();
 	places_array.forEach(function(place){
-		if(place.price == 2){
-			var icon = create_icon(place);
+		var icon = create_icon(place);
+		if(price != 0){
+			if(place.price_level == price){
+				push_marker(place, icon);
+				side_bar_html += '<a href="javascript:myclick(' + (markers.length-1) + ')">' + place.name + '<\/a><br>';
+			}
 		}
+		else{
+			push_marker(place, icon);
+			side_bar_html += '<a href="javascript:myclick(' + (markers.length-1) + ')">' + place.name + '<\/a><br>';
+		}
+
 	});
+	document.getElementById("places").innerHTML = side_bar_html;
 }
 
