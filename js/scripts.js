@@ -7,7 +7,7 @@ var infoWindow;
 var searchBox;
 var pricing;
 var rating;
-var polygoneParcelleHeig;
+var free_polygon;
 var price_filter = false;
 var rate_filter = false;
 var markers = [];
@@ -64,8 +64,14 @@ function initMap(){
 		bounds = new google.maps.LatLngBounds();
 		places.forEach(function(place) {
 			var icon = create_icon(place);
-			if(drawn_shape == null){
+			if(drawn_shape == null && free_polygon == null){
 				side_bar_html = push_place_sidebar(place, icon, bounds, side_bar_html);
+			}
+			else if(free_polygon != null){
+				console.log("test");
+				if(google.maps.geometry.poly.containsLocation(place.geometry.location, free_polygon)){
+					side_bar_html = push_place_sidebar(place, icon, bounds, side_bar_html);
+				}
 			}
 			else if(drawn_shape.type == google.maps.drawing.OverlayType.POLYGON){
 				if(google.maps.geometry.poly.containsLocation(place.geometry.location, drawn_shape.overlay)){
@@ -82,7 +88,7 @@ function initMap(){
 				if(drawn_shape.overlay.getBounds().contains(place.geometry.location)){
 					side_bar_html = push_place_sidebar(place, icon, bounds, side_bar_html);
 				}
-			}	
+			}
 		});
 		// if(drawn_shape != null){
 			// drawn_shape.overlay.setMap(null);
@@ -96,6 +102,10 @@ function initMap(){
 		if(drawn_shape != null){
 			drawn_shape.overlay.setMap(null);
 			drawn_shape = null;
+		} 
+		else if(free_polygon != null){
+			free_polygon.setMap(null);
+			free_polygon = null;
 		} 
 		drawn_shape = event;
 		drawingManager.setDrawingMode(null);
@@ -251,27 +261,36 @@ function CustomControl(controlDiv, map) {
 		google.maps.event.addListenerOnce(map, 'mouseup', function () {
 			isDrawing=false;
 			//console.log(parcelleHeig);
-			if(polygoneParcelleHeig != null) polygoneParcelleHeig.setMap(null);
-			polygoneParcelleHeig = new google.maps.Polygon({
-				paths: parcelleHeig,//sommets du polygone
-				strokeColor: "#0FF000",//couleur des bords du polygone
-				strokeOpacity: 0.8,//opacité des bords du polygone
-				strokeWeight: 2,//épaisseur des bords du polygone
-				fillColor: "#0FF000",//couleur de remplissage du polygone
-				fillOpacity: 0.35,////opacité de remplissage du polygone
+			if(free_polygon != null){
+				free_polygon.setMap(null);
+				free_polygon = null;
+			} 
+			else if(drawn_shape != null){
+				drawn_shape.overlay.setMap(null);
+				drawn_shape = null;
+			} 
+			free_polygon = new google.maps.Polygon({
+				paths: parcelleHeig,
+				strokeColor: "#0FF000",
+				strokeOpacity: 0.8,
+				strokeWeight: 2,
+				fillColor: "#0FF000",
+				fillOpacity: 0.35,
 				editable:true,
+				clickable: false,
 				geodesic: false
 
 			});
 			
 			//simplify polygon
 			var douglasPeuckerThreshold = 3; // in meters
-			polygoneParcelleHeig.douglasPeucker(360.0 / (2.0 * Math.PI * earthRadius));
+			free_polygon.douglasPeucker(360.0 / (2.0 * Math.PI * earthRadius));
 			
 			parcelleHeig=Array();
-			polygoneParcelleHeig.setMap(map);
-			polyLine.setMap(null);
+			free_polygon.setMap(map);
+			if(polyLine != null) polyLine.setMap(null);
 			map.setOptions({draggable: true});
+			if(markers.length != 0) google.maps.event.trigger(searchBox, 'places_changed');
 		});
     });
 }
