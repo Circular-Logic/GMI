@@ -5,12 +5,14 @@ var service;
 var drawn_shape;
 var infoWindow;
 var searchBox;
-var price_filter = false;
-var rate_filter = false;
 var pricing;
 var rating;
+var polygoneParcelleHeig;
+var price_filter = false;
+var rate_filter = false;
 var markers = [];
 var places_array = [];
+var earthRadius = 6378137.0;
 
 //  Displays map
 function initMap(){
@@ -82,10 +84,10 @@ function initMap(){
 				}
 			}	
 		});
-		if(drawn_shape != null){
-			drawn_shape.overlay.setMap(null);
-			drawn_shape = null;
-		}
+		// if(drawn_shape != null){
+			// drawn_shape.overlay.setMap(null);
+			// drawn_shape = null;
+		// }
 		document.getElementById("places").innerHTML = side_bar_html;
 	});
 
@@ -99,6 +101,179 @@ function initMap(){
 		drawingManager.setDrawingMode(null);
 		if(markers.length != 0) google.maps.event.trigger(searchBox, 'places_changed');
 	});
+	
+
+	
+	var customControlDiv = document.createElement('div');
+    var customControl = new CustomControl(customControlDiv, map);
+
+    customControlDiv.index = 1;
+    map.controls[google.maps.ControlPosition.TOP_CENTER].push(customControlDiv);
+	
+	google.maps.Polygon.prototype.douglasPeucker = function(tolerance){
+		var res = null;
+		//adjust tolerance depending on the zoom level
+		tolerance       = tolerance * Math.pow(2, 20 - map.getZoom());
+		if(this.getPath() && this.getPath().getLength()){
+			var points = this.getPath().getArray();
+
+			var Line = function( p1, p2 ) {
+				this.p1 = p1;
+				this.p2 = p2;
+
+				this.distanceToPoint = function( point ) {
+					// slope
+					var m = ( this.p2.lat() - this.p1.lat() ) / ( this.p2.lng() - this.p1.lng() ),
+						// y offset
+						b = this.p1.lat() - ( m * this.p1.lng() ),
+						d = [];
+					// distance to the linear equation
+					d.push( Math.abs( point.lat() - ( m * point.lng() ) - b ) / Math.sqrt( Math.pow( m, 2 ) + 1 ) );
+					// distance to p1
+					d.push( Math.sqrt( Math.pow( ( point.lng() - this.p1.lng() ), 2 ) + Math.pow( ( point.lat() - this.p1.lat() ), 2 ) ) );
+					// distance to p2
+					d.push( Math.sqrt( Math.pow( ( point.lng() - this.p2.lng() ), 2 ) + Math.pow( ( point.lat() - this.p2.lat() ), 2 ) ) );
+					// return the smallest distance
+					return d.sort( function( a, b ) {
+						return ( a - b ); //causes an array to be sorted numerically and ascending
+					} )[0];
+				};
+			};
+
+			var douglasPeucker = function( points, tolerance ) {
+					
+				if ( points.length <= 2 ) {
+					return [points[0]];
+				}
+				var returnPoints = [],
+					// make line from start to end 
+					line = new Line( points[0], points[points.length - 1] ),
+					// find the largest distance from intermediate poitns to this line
+					maxDistance = 0,
+					maxDistanceIndex = 0,
+					p;
+				for( var i = 1; i <= points.length - 2; i++ ) {
+					var distance = line.distanceToPoint( points[ i ] );
+					if( distance > maxDistance ) {
+						maxDistance = distance;
+						maxDistanceIndex = i;
+					}
+				}
+				// check if the max distance is greater than our tollerance allows 
+				if ( maxDistance >= tolerance ) {
+					p = points[maxDistanceIndex];
+					line.distanceToPoint( p, true );
+					// include this point in the output 
+					returnPoints = returnPoints.concat( douglasPeucker( points.slice( 0, maxDistanceIndex + 1 ), tolerance ) );
+					// returnPoints.push( points[maxDistanceIndex] );
+					returnPoints = returnPoints.concat( douglasPeucker( points.slice( maxDistanceIndex, points.length ), tolerance ) );
+				} else {
+					// ditching this point
+					p = points[maxDistanceIndex];
+					line.distanceToPoint( p, true );
+					returnPoints = [points[0]];
+				}
+				return returnPoints;
+			};
+			res = douglasPeucker( points, tolerance );
+			// always have to push the very last point on so it doesn't get left off
+			res.push( points[points.length - 1 ] );
+			this.setPath(res);
+		}
+		return this;
+	};
+}
+
+function CustomControl(controlDiv, map) {
+
+    // Set CSS for the control border
+    var controlUI = document.createElement('div');
+    controlUI.style.backgroundColor = '#ffffff';
+    controlUI.style.borderStyle = 'solid';
+    controlUI.style.borderWidth = '1px';
+    controlUI.style.borderColor = '#ccc';
+    controlUI.style.height = '25px';
+    controlUI.style.marginTop = '4px';
+    controlUI.style.marginLeft = '-6px';
+    controlUI.style.paddingTop = '1px';
+    controlUI.style.cursor = 'pointer';
+    controlUI.style.textAlign = 'center';
+    controlUI.title = 'Click to set the map to Home';
+    controlDiv.appendChild(controlUI);
+
+    // Set CSS for the control interior
+    var controlText = document.createElement('div');
+    controlText.style.fontFamily = 'Arial,sans-serif';
+    controlText.style.fontSize = '10px';
+    controlText.style.paddingLeft = '4px';
+    controlText.style.paddingRight = '4px';
+    controlText.style.marginTop = '4px';
+	controlText.style.fontWeight = 'bold';
+    controlText.innerHTML = 'Free';
+    controlUI.appendChild(controlText);
+
+    // Setup the click event listeners
+    google.maps.event.addDomListener(controlUI, 'click', function () {
+		//Free Drawing Listener
+		var overlay = new google.maps.OverlayView();
+		overlay.draw = function () {};
+		overlay.setMap(map);
+		var isDrawing = false;
+		var polyLine;
+		var parcelleHeig = Array();
+		map.setOptions({draggable: false});
+		google.maps.event.addListenerOnce(map, 'mousedown', function () {
+			isDrawing=true;
+			polyLine = new google.maps.Polyline({
+				map: map,
+				clickable: false
+			});
+			$("#map").mousemove(function (e) {
+				if(isDrawing == true)
+				{
+					var pageX = e.pageX;
+					var pageY = e.pageY;
+					var point = new google.maps.Point(parseInt(pageX), parseInt(pageY));
+
+					var latLng = overlay.getProjection().fromDivPixelToLatLng(point);
+
+					polyLine.getPath().push(latLng);
+
+					latLng = String(latLng);
+					latLng=latLng.replace("(","");
+					latLng=latLng.replace(")","");
+
+					var array_lng =  latLng.split(',');
+					parcelleHeig.push(new google.maps.LatLng(array_lng[0],array_lng[1])) ;
+				}
+			});
+		});
+		google.maps.event.addListenerOnce(map, 'mouseup', function () {
+			isDrawing=false;
+			//console.log(parcelleHeig);
+			if(polygoneParcelleHeig != null) polygoneParcelleHeig.setMap(null);
+			polygoneParcelleHeig = new google.maps.Polygon({
+				paths: parcelleHeig,//sommets du polygone
+				strokeColor: "#0FF000",//couleur des bords du polygone
+				strokeOpacity: 0.8,//opacité des bords du polygone
+				strokeWeight: 2,//épaisseur des bords du polygone
+				fillColor: "#0FF000",//couleur de remplissage du polygone
+				fillOpacity: 0.35,////opacité de remplissage du polygone
+				editable:true,
+				geodesic: false
+
+			});
+			
+			//simplify polygon
+			var douglasPeuckerThreshold = 3; // in meters
+			polygoneParcelleHeig.douglasPeucker(360.0 / (2.0 * Math.PI * earthRadius));
+			
+			parcelleHeig=Array();
+			polygoneParcelleHeig.setMap(map);
+			polyLine.setMap(null);
+			map.setOptions({draggable: true});
+		});
+    });
 }
 
 function push_place_sidebar(place, icon, bounds, side_bar_html){
@@ -170,6 +345,14 @@ function create_draw_manager(){
 			clickable: true,
 			editable: true,
 			zIndex: 1
+		},
+		polygonOptions:{
+			fillColor: '#ffff00',
+			fillOpacity: .2,
+			strokeWeight: .5,
+			clickable: true,
+			editable: true,
+			zIndex: 1
 		}
 	});
 	return drawingManager;
@@ -210,13 +393,11 @@ function price_loop(price){
 		var icon = create_icon(place);
 		if(price != 0){
 			if(place.price_level == price){
-				push_marker(place, icon);
-				side_bar_html += '<a href="javascript:myclick(' + (markers.length-1) + ')">' + place.name + '<\/a><br>';
+				side_bar_html = sort_pusher(place, icon, side_bar_html);
 			}
 		}
 		else{
-			push_marker(place, icon);
-			side_bar_html += '<a href="javascript:myclick(' + (markers.length-1) + ')">' + place.name + '<\/a><br>';
+			side_bar_html = sort_pusher(place, icon, side_bar_html);
 		}
 	});
 	document.getElementById("places").innerHTML = side_bar_html;
@@ -239,13 +420,11 @@ function rating_loop(rate){
 		var icon = create_icon(place);
 		if(rate != 0){
 			if(place.rating >= rate){
-				push_marker(place, icon);
-				side_bar_html += '<a href="javascript:myclick(' + (markers.length-1) + ')">' + place.name + '<\/a><br>';
+				side_bar_html = sort_pusher(place, icon, side_bar_html);
 			}
 		}
 		else{
-			push_marker(place, icon);
-			side_bar_html += '<a href="javascript:myclick(' + (markers.length-1) + ')">' + place.name + '<\/a><br>';
+			side_bar_html = sort_pusher(place, icon, side_bar_html);
 		}
 	});
 	document.getElementById("places").innerHTML = side_bar_html;
@@ -258,27 +437,28 @@ function sort_by_both(price, rate){
 		var icon = create_icon(place);
 		if(price != 0 && rate != 0){
 			if(place.price_level == price && place.rating >= rate){
-				push_marker(place, icon);
-				side_bar_html += '<a href="javascript:myclick(' + (markers.length-1) + ')">' + place.name + '<\/a><br>';
+				side_bar_html = sort_pusher(place, icon, side_bar_html);
 			}
 		}
 		else if(price == 0){
 			if(place.rating >= rate){
-				push_marker(place, icon);
-				side_bar_html += '<a href="javascript:myclick(' + (markers.length-1) + ')">' + place.name + '<\/a><br>';
+				side_bar_html = sort_pusher(place, icon, side_bar_html);
 			}
 		}
 		else if(rate == 0){
 			if(place.price_level == price){
-				push_marker(place, icon);
-				side_bar_html += '<a href="javascript:myclick(' + (markers.length-1) + ')">' + place.name + '<\/a><br>';
+				side_bar_html = sort_pusher(place, icon, side_bar_html);
 			}
 		}
-		else{
-			push_marker(place, icon);
-			side_bar_html += '<a href="javascript:myclick(' + (markers.length-1) + ')">' + place.name + '<\/a><br>';
-		}
+		else side_bar_html = sort_pusher(place, icon, side_bar_html);
 	});
 	document.getElementById("places").innerHTML = side_bar_html;
 }
+
+function sort_pusher(place, icon, side_bar_html){
+	push_marker(place, icon);
+	return side_bar_html += '<a href="javascript:myclick(' + (markers.length-1) + ')">' + place.name + '<\/a><br>';
+}
+
+
 
