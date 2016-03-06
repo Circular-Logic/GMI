@@ -1,101 +1,45 @@
 <!DOCTYPE html>
-<html lang="en">
-	<head>
-	<meta charset="utf-8">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
-	<title>GMI</title>
+<html>
 
-	<!-- Bootstrap -->
-	<link href="css/bootstrap.min.css" rel="stylesheet">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GMI</title>
+    <link rel="stylesheet" href="pages/assets/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="pages/assets/css/styles.css">
+    <link rel="stylesheet" href="pages/assets/css/banner.css">
+    <link rel="stylesheet" href="pages/assets/css/laptop.css">
+    <link rel="stylesheet" href="pages/assets/css/iphone.css">
+</head>
 
-	<!-- Custom StyleSheets Placed Here -->
-	<link href="css/custom.css" rel="stylesheet">
-	<link href="css/styles.css" rel="stylesheet">
-	<link href="css/simple-sidebar.css" rel="stylesheet">
+<body>
+    <div class="jumbotron hero-technology">
+        <h1 class="hero-title">GMI</h1>
+        <p class="hero-subtitle">Making searching for places easy and simple.</p>
+        <p><a class="btn btn-primary btn-lg hero-button" role="button" href="map.html" >Lets Start</a></p>
+    </div>
+    <div class="jumbotron">
+        <h1 class="text-center">Places</h1>
+        <p>No matter where you are there is always something new to discover.</p>
+        <p></p>
+    </div>
+    <div class="macbook-mockup"><img src="pages/assets/img/macbook.svg" class="device">
+        <div class="screen"></div>
+    </div>
+    <div class="jumbotron" id="right">
+        <h1 class="text-center">On the Go</h1>
+        <p class="text-center">With GMI, searching has never been easier.</p>
+    </div>
+    <div></div>
+    <div class="iphone-mockup"><img src="pages/assets/img/iphone.svg" class="device">
+        <div class="screen"></div>
+    </div>
+  <div class="jumbotron" id="right">
+    <h1 class="text-center">What are you waiting for?</h1>
+    <p><a class="btn btn-primary btn-lg hero-button" role="button" href="map.html" >Lets Start</a></p>
+  </div>
+    <script src="pages/assets/js/jquery.min.js"></script>
+    <script src="pages/assets/bootstrap/js/bootstrap.min.js"></script>
+</body>
 
-
-	<!-- Custom StyleSheets Placed Here -->
-	<link href="css/custom.css" rel="stylesheet">
-	<link href="css/styles.css" rel="stylesheet">
-
-	<!--    Google API-->
-	<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBqS-0C9Vj4EsjdqpOmf2goXpg0q5BSZ9E&libraries=places,drawing&callback=initMap" async defer></script>
-	</head>
-	<body>
-		<!-- <nav class="navbar navbar-inverse navbar-fixed-top">
-		<div class="container">
-		  <div class="navbar-header">
-			<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-			<span class="sr-only">Toggle navigation</span>
-			<span class="icon-bar"></span>
-			<span class="icon-bar"></span>
-			<span class="icon-bar"></span>
-			</button>
-			<a class="navbar-brand" href="pages/overview.html">GMI Home</a>
-		  </div>
-		  <div id="navbar" class="navbar-collapse collapse">
-			<ul class="nav navbar-nav">
-			<li><a href="pages/overview.html" >Overview</a></li>
-			<li><a href="#contact">Contact</a></li>
-			<li class="dropdown">
-			  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Menu <span class="caret"></span></a>
-			  <ul class="dropdown-menu">
-			  <li><a href="#">Action</a></li>
-			  <li><a href="#">Another action</a></li>
-			  <li><a href="#">Something else here</a></li>
-			  <li role="separator" class="divider"></li>
-			  <li class="dropdown-header">Nav header</li>
-			  <li><a href="#">Separated link</a></li>
-			  <li><a href="#">One more separated link</a></li>
-			  </ul>
-			</li>
-			</ul>
-		  </div>
-		</div>
-		</nav> -->
-
-		<!--Search Bar-->
-		<div id="Menu-bar">
-			<input id="autocomplete" class="controls" type="text" placeholder="Enter Place">
-		</div>
-		<table border=1>
-			<tr>
-				<td>
-				   <div id="map"></div>
-				</td>
-				<td>
-					<div id="side_bar">
-						<div id="places">
-						</div>
-						<div id="ratings">
-							<p>Rating Level</p>
-							<a onclick="sort_by_rating(1);" class="btn" role="button">1+</a>
-							<a onclick="sort_by_rating(2);" class="btn" role="button">2+</a>
-							<a onclick="sort_by_rating(3);" class="btn" role="button">3+</a>
-							<a onclick="sort_by_rating(4);" class="btn" role="button">4+</a>
-							<a onclick="sort_by_rating(0);" class="btn" role="button">Any</a>
-						</div>
-						<div id="buttons">
-							<p>Price Level</p>
-							<a onclick="sort_by_price(1);" class="btn" role="button">1</a>
-							<a onclick="sort_by_price(2);" class="btn" role="button">2</a>
-							<a onclick="sort_by_price(3);" class="btn" role="button">3</a>
-							<a onclick="sort_by_price(4);" class="btn" role="button">4</a>
-							<a onclick="sort_by_price(0);" class="btn" role="button">Any</a>
-						</div>
-					</div>
-				</td>
-			</tr>
-		</table>
-		<!--Container for Google Maps-->
-		<!-- <div id="map">	</div> -->
-		<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-		<!-- Include all compiled plugins (below), or include individual files as needed -->
-		<script src="js/bootstrap.min.js"></script>
-
-		<script src="js/scripts.js"></script>
-	</body>
 </html>

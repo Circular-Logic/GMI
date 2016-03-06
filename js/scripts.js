@@ -13,6 +13,7 @@ var rate_filter = false;
 var markers = [];
 var places_array = [];
 var earthRadius = 6378137.0;
+var side_bar_out = false;
 
 //  Displays map
 function initMap(){
@@ -232,9 +233,13 @@ function CustomControl(controlDiv, map) {
 		var isDrawing = false;
 		var polyLine;
 		var polygon_array = Array();
+		var overlay;
 		map.setOptions({draggable: false});
 		//listener for mouse down
 		google.maps.event.addListenerOnce(map, 'mousedown', function () {
+			overlay = new google.maps.OverlayView();
+			overlay.draw = function () {};
+			overlay.setMap(map);
 			isDrawing=true;
 			polyLine = new google.maps.Polyline({
 				map: map,
@@ -245,6 +250,7 @@ function CustomControl(controlDiv, map) {
 				{
 					var pageX = e.pageX;
 					var pageY = e.pageY;
+					if(side_bar_out) pageX -= 300;
 					var point = new google.maps.Point(parseInt(pageX), parseInt(pageY));
 
 					var latLng = overlay.getProjection().fromContainerPixelToLatLng(point);
@@ -259,9 +265,10 @@ function CustomControl(controlDiv, map) {
 					polygon_array.push(new google.maps.LatLng(array_lng[0],array_lng[1])) ;
 				}
 			});
+
 		});
 		//listener for mouse up
-		google.maps.event.addListenerOnce(map, 'mouseup', function () {
+		var map_listener = google.maps.event.addListenerOnce(map, 'mouseup', function () {
 			isDrawing=false;
 			//console.log(polygon_array);
 			if(free_polygon != null){
@@ -389,9 +396,9 @@ function clear_markers(){
 }
 
 function toggle_sidebar(){
+	side_bar_out = true;
 	document.getElementById("side_bar").style.display="inline";
-	document.getElementById("map").style.width="80%";
-	document.getElementById("map").style.left="20%";
+	document.getElementById("map").style.left="300px";
 }
 
 function myclick(i){
