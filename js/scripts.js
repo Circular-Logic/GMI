@@ -113,17 +113,18 @@ function initMap(){
 	});
 	
 
-	
+	//creates custom control of free hand drawing on drawing manager
 	var customControlDiv = document.createElement('div');
     var customControl = new CustomControl(customControlDiv, map);
 
     customControlDiv.index = 1;
     map.controls[google.maps.ControlPosition.TOP_CENTER].push(customControlDiv);
 	
+	//creates prototype for free drawing
 	google.maps.Polygon.prototype.douglasPeucker = function(tolerance){
 		var res = null;
 		//adjust tolerance depending on the zoom level
-		tolerance       = tolerance * Math.pow(2, 20 - map.getZoom());
+		tolerance = tolerance * Math.pow(2, 20 - map.getZoom());
 		if(this.getPath() && this.getPath().getLength()){
 			var points = this.getPath().getArray();
 
@@ -138,7 +139,7 @@ function initMap(){
 						b = this.p1.lat() - ( m * this.p1.lng() ),
 						d = [];
 					// distance to the linear equation
-					d.push( Math.abs( point.lat() - ( m * point.lng() ) - b ) / Math.sqrt( Math.pow( m, 2 ) + 1 ) );
+					d.push(Math.abs(point.lat() - (m * point.lng()) - b) / Math.sqrt(Math.pow(m, 2) + 1));
 					// distance to p1
 					d.push( Math.sqrt( Math.pow( ( point.lng() - this.p1.lng() ), 2 ) + Math.pow( ( point.lat() - this.p1.lat() ), 2 ) ) );
 					// distance to p2
@@ -194,8 +195,8 @@ function initMap(){
 	};
 }
 
+//CustomControl for the free hand drawer
 function CustomControl(controlDiv, map) {
-
     // Set CSS for the control border
     var controlUI = document.createElement('div');
     controlUI.style.backgroundColor = '#ffffff';
@@ -230,8 +231,9 @@ function CustomControl(controlDiv, map) {
 		overlay.setMap(map);
 		var isDrawing = false;
 		var polyLine;
-		var parcelleHeig = Array();
+		var polygon_array = Array();
 		map.setOptions({draggable: false});
+		//listener for mouse down
 		google.maps.event.addListenerOnce(map, 'mousedown', function () {
 			isDrawing=true;
 			polyLine = new google.maps.Polyline({
@@ -254,13 +256,14 @@ function CustomControl(controlDiv, map) {
 					latLng=latLng.replace(")","");
 
 					var array_lng =  latLng.split(',');
-					parcelleHeig.push(new google.maps.LatLng(array_lng[0],array_lng[1])) ;
+					polygon_array.push(new google.maps.LatLng(array_lng[0],array_lng[1])) ;
 				}
 			});
 		});
+		//listener for mouse up
 		google.maps.event.addListenerOnce(map, 'mouseup', function () {
 			isDrawing=false;
-			//console.log(parcelleHeig);
+			//console.log(polygon_array);
 			if(free_polygon != null){
 				free_polygon.setMap(null);
 				free_polygon = null;
@@ -270,7 +273,7 @@ function CustomControl(controlDiv, map) {
 				drawn_shape = null;
 			} 
 			free_polygon = new google.maps.Polygon({
-				paths: parcelleHeig,
+				paths: polygon_array,
 				strokeColor: "#0FF000",
 				strokeOpacity: 0.8,
 				strokeWeight: 2,
@@ -286,7 +289,7 @@ function CustomControl(controlDiv, map) {
 			var douglasPeuckerThreshold = 3; // in meters
 			free_polygon.douglasPeucker(360.0 / (2.0 * Math.PI * earthRadius));
 			
-			parcelleHeig=Array();
+			polygon_array=Array();
 			free_polygon.setMap(map);
 			if(polyLine != null) polyLine.setMap(null);
 			map.setOptions({draggable: true});
@@ -350,7 +353,7 @@ function create_draw_manager(){
 		  ]
 		},
 		circleOptions: {
-		  fillColor: '#ffff00',
+		  fillColor: '#0FF000',
 		  fillOpacity: .2,
 		  strokeWeight: .1,
 		  clickable: true,
@@ -358,7 +361,7 @@ function create_draw_manager(){
 		  zIndex: 1
 		},
 		rectangleOptions:{
-			fillColor: '#ffff00',
+			fillColor: '#0FF000',
 			fillOpacity: .2,
 			strokeWeight: .1,
 			clickable: true,
@@ -366,7 +369,7 @@ function create_draw_manager(){
 			zIndex: 1
 		},
 		polygonOptions:{
-			fillColor: '#ffff00',
+			fillColor: '#0FF000',
 			fillOpacity: .2,
 			strokeWeight: .5,
 			clickable: true,
