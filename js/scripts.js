@@ -245,7 +245,7 @@ function CustomControl(controlDiv, map) {
 					var pageY = e.pageY;
 					var point = new google.maps.Point(parseInt(pageX), parseInt(pageY));
 
-					var latLng = overlay.getProjection().fromDivPixelToLatLng(point);
+					var latLng = overlay.getProjection().fromContainerPixelToLatLng(point);
 
 					polyLine.getPath().push(latLng);
 
