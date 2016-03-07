@@ -399,6 +399,7 @@ function toggle_sidebar(){
 	side_bar_out = true;
 	document.getElementById("side_bar").style.display="inline";
 	document.getElementById("map").style.left="300px";
+	document.getElementById("map").style.width="calc(100% - 300px)";
 }
 
 function myclick(i){
