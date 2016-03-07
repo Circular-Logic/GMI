@@ -330,7 +330,7 @@ function push_marker(place, icon){
 		title: place.name,
 		position: place.geometry.location
 	});
-	var content_string = place.name.bold() + '<br>' + "Price Level: " + place.price_level;
+	var content_string = place.name.bold() + '<br>' + "Price Level: " + place.price_level + '<br>' + "Rating: " + place.rating;
 	marker.addListener('click', function(){//makes markers clickable
 		infoWindow.setContent(content_string);
 		infoWindow.open(map, marker);
